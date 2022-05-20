@@ -1,19 +1,15 @@
 const path = require("path");
 const fs = require("fs");
 
-const writeStreamFile = fs.createWriteStream(
-  path.join(__dirname, "project-dist", "bundle.css")
-);
-const readDir = fs.readdir(
-  path.join(__dirname, "styles"),
-  { withFileTypes: true },
-  (err, files) => {
+function copyStyle (srcPath, srcBundle) {
+   const writeStreamFile = fs.createWriteStream(srcBundle);
+const readDir = fs.readdir(srcPath, { withFileTypes: true }, (err, files) => {
     if (err) throw err;
     for (let i = 0; i < files.length; i++) {        
       if (files[i].isFile()) {
         if (path.extname(`${files[i].name}`) == '.css') {
           let readStreamFile = fs.createReadStream(
-            path.join(__dirname, "styles", `${files[i].name}`)
+            path.join(srcPath, `${files[i].name}`)
           );
           let data = "";
           readStreamFile.on("data", chunk => {
@@ -25,4 +21,7 @@ const readDir = fs.readdir(
       }
     }
   }
-);
+); 
+}
+
+copyStyle(path.join(__dirname, "styles"), path.join(__dirname, "project-dist", "bundle.css"))
