@@ -9,9 +9,9 @@ const readDir = fs.readdir(
   { withFileTypes: true },
   (err, files) => {
     if (err) throw err;
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i++) {        
       if (files[i].isFile()) {
-        if (path.extname(`${files[i].name}`)) {
+        if (path.extname(`${files[i].name}`) == '.css') {
           let readStreamFile = fs.createReadStream(
             path.join(__dirname, "styles", `${files[i].name}`)
           );
