@@ -9,7 +9,7 @@ async function copyStyle(srcPath, srcBundle) {
     if(file.isFile()) {
       if(path.extname(`${file.name}`) == '.css') {
         let readFile = await fsPromises.readFile(path.join(srcPath, `${file.name}`));
-        writeStreamFile.write(readFile);
+        writeStreamFile.write(readFile + '\n');
       }
     }
   }
