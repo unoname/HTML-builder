@@ -1,7 +1,7 @@
 const fs = require('fs');
 const fsPromises = require("fs/promises");
 const path = require('path');
-const copyStyle = require('../05-merge-styles/index');
+const copyStyle = require('../05-merge-styles');
 
 async function copyDir(pathDir, pathDirCopy) {
     await fsPromises.rm(pathDirCopy, { recursive: true, force: true});
@@ -19,7 +19,7 @@ async function copyDir(pathDir, pathDirCopy) {
             await copyDir(srcPath, destPath);        
         } 
       } 
-      copyStyle.copyStyle(path.join(__dirname, 'styles'), path.join(__dirname, 'project-dist', 'style.css'));
+      copyStyle(path.join(__dirname, 'styles'), path.join(__dirname, 'project-dist', 'style.css'));
       createIndexHTML(path.join(__dirname, 'project-dist', 'index.html'), path.join(__dirname, 'template.html'), path.join(__dirname, 'components'));
     }
 
