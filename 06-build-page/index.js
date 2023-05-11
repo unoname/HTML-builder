@@ -23,30 +23,26 @@ async function copyDir(pathDir, pathDirCopy) {
       await createIndexHTML(path.join(__dirname, 'project-dist', 'index.html'), path.join(__dirname, 'template.html'), path.join(__dirname, 'components'));
     }
 
-async function createIndexHTML(pathIndex, pathTemplate, pathComponents) {
-const writeStrimIndexHTML = await fs.createWriteStream(pathIndex);
-const readStrimTemplate = await fs.createReadStream(pathTemplate);
-fs.readdir((pathComponents), 'utf-8', (err, files) => {
-    if(err) throw err;
-     let template = '';
-readStrimTemplate.on('data', chunk => {
-     template += chunk;
-     let readFile = '';    
-    let result = '';
-for(let i = 0; i < files.length; i++) {   
-readFile = fs.readFile((path.join(pathComponents, `${files[i]}`)), 'utf-8', (err, data) => {
-    if(err) throw err;
-    let components = data;
-    let name = files[i].split('.').shift();    
-    let re = new RegExp(`{{${name}}}`, 'g');
-    template = template.replace(re, components);
-    if(i == files.length - 1) {
-        writeStrimIndexHTML.write(template);
-          }
-        })
-      }
-    })        
- })     
-}
+    async function createIndexHTML(pathIndex, pathTemplate, pathComponents) {
+      const writeStrimIndexHTML = fs.createWriteStream(pathIndex);
+      const readStrimTemplate = fs.createReadStream(pathTemplate);
+      const files = await fs.promises.readdir(pathComponents);
+      const readFiles = files.map((file) => {
+        return fs.promises.readFile(path.join(pathComponents, file), 'utf-8');
+      });
+      const components = await Promise.all(readFiles);
+      let template = '';
+      readStrimTemplate.on('data', (chunk) => {
+        template += chunk;
+      });
+      readStrimTemplate.on('end', async () => {
+        for (let i = 0; i < files.length; i++) {
+          const name = files[i].split('.')[0];
+          const re = new RegExp(`{{${name}}}`, 'g');
+          template = template.replace(re, components[i]);
+        }
+        await writeStrimIndexHTML.write(template);
+      });
+    }
 
 copyDir(path.join(__dirname, 'assets'), path.join(__dirname, 'project-dist', 'assets'));
