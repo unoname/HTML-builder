@@ -19,13 +19,13 @@ async function copyDir(pathDir, pathDirCopy) {
             await copyDir(srcPath, destPath);        
         } 
       } 
-      copyStyle(path.join(__dirname, 'styles'), path.join(__dirname, 'project-dist', 'style.css'));
-      createIndexHTML(path.join(__dirname, 'project-dist', 'index.html'), path.join(__dirname, 'template.html'), path.join(__dirname, 'components'));
+      await copyStyle(path.join(__dirname, 'styles'), path.join(__dirname, 'project-dist', 'style.css'));
+      await createIndexHTML(path.join(__dirname, 'project-dist', 'index.html'), path.join(__dirname, 'template.html'), path.join(__dirname, 'components'));
     }
 
-function createIndexHTML(pathIndex, pathTemplate, pathComponents) {
-const writeStrimIndexHTML = fs.createWriteStream(pathIndex);
-const readStrimTemplate = fs.createReadStream(pathTemplate);
+async function createIndexHTML(pathIndex, pathTemplate, pathComponents) {
+const writeStrimIndexHTML = await fs.createWriteStream(pathIndex);
+const readStrimTemplate = await fs.createReadStream(pathTemplate);
 fs.readdir((pathComponents), 'utf-8', (err, files) => {
     if(err) throw err;
      let template = '';
